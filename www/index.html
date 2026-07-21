@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>PhotoApp</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+    <h1>📷 PhotoApp</h1>
+
+
+    <button id="camera">
+        Prendre une photo
+    </button>
+
+
+    <img id="preview"
+         alt="Aperçu photo">
+
+
+    <button id="upload"
+            disabled>
+        Envoyer vers Raspberry
+    </button>
+
+
+    <p id="status"></p>
+
+
+</div>
+
+
+<!-- Capacitor runtime -->
+<script src="capacitor.js"></script>
+
+<!-- Application -->
+<script type="module" src="app.js"></script>
+
+
+</body>
+
+</html>
