@@ -1,145 +1,127 @@
+const {
+    Camera,
+    CameraResultType,
+    CameraSource,
+    CameraDirection
+} = Capacitor.Plugins;
+
+
 let photoBase64 = null;
 
 
-
-const cameraButton =
-    document.getElementById("camera");
-
-
-const uploadButton =
-    document.getElementById("upload");
-
-
-const preview =
-    document.getElementById("preview");
-
-
-const status =
-    document.getElementById("status");
+const cameraButton = document.getElementById("camera");
+const uploadButton = document.getElementById("upload");
+const preview = document.getElementById("preview");
+const status = document.getElementById("status");
 
 
 
 /*
-    Plugin caméra Capacitor
+    Ouverture caméra avant
 */
-
-const {
-    Camera,
-    CameraResultType,
-    CameraSource
-
-} = Capacitor.Plugins;
-
-
 
 cameraButton.onclick = async () => {
 
-
     try {
 
+        const photo = await Camera.getPhoto({
 
-        const photo =
-            await Camera.getPhoto({
+            quality: 80,
 
-                quality: 80,
+            source: CameraSource.Camera,
 
-                source:
-                    CameraSource.Camera,
+            direction: CameraDirection.Front,
 
-                resultType:
-                    CameraResultType.DataUrl
+            resultType: CameraResultType.DataUrl
 
-            });
+        });
 
 
+        // Affichage aperçu
 
-        preview.src =
-            photo.dataUrl;
+        preview.src = photo.dataUrl;
 
-
-        preview.style.display =
-            "block";
+        preview.style.display = "block";
 
 
+
+        // Récupération du Base64 sans le préfixe
 
         photoBase64 =
             photo.dataUrl.split(",")[1];
 
 
 
-        uploadButton.disabled =
-            false;
-
+        uploadButton.disabled = false;
 
 
         status.innerHTML =
-            "Photo prête";
+            "✅ Photo prête";
 
 
-
-    }
-
-    catch(error) {
-
+    } catch (error) {
 
         console.error(error);
 
-
         status.innerHTML =
-            "Erreur caméra";
+            "❌ Erreur caméra";
 
     }
-
 
 };
 
 
 
 
-/*
-    Upload Raspberry
-*/
 
+/*
+    Upload vers Raspberry Pi
+*/
 
 uploadButton.onclick = async () => {
 
 
-    if(!photoBase64)
+    if (!photoBase64) {
+
+        status.innerHTML =
+            "Aucune photo";
+
         return;
+
+    }
 
 
 
     status.innerHTML =
-        "Envoi...";
+        "📤 Envoi en cours...";
 
 
 
     try {
 
 
-        const response =
-            await fetch(
-                "https://photo.cybernyl.xyz/upload",
-                {
+        const response = await fetch(
+            "https://photo.cybernyl.xyz/upload",
+            {
 
-                    method:"POST",
+                method: "POST",
 
-                    headers:{
+                headers: {
 
-                        "Content-Type":
-                        "application/json"
+                    "Content-Type":
+                    "application/json"
 
-                    },
+                },
 
 
-                    body:JSON.stringify({
+                body: JSON.stringify({
 
-                        image:
-                        photoBase64
+                    image: photoBase64
 
-                    })
+                })
 
-                });
+            }
+        );
 
 
 
@@ -148,29 +130,26 @@ uploadButton.onclick = async () => {
 
 
 
-        if(result.success){
+        if (result.success) {
 
 
             status.innerHTML =
-                "✅ Envoyé : "
+                "✅ Envoyée : "
                 + result.file;
 
 
-        }
-
-        else {
+        } else {
 
 
             status.innerHTML =
                 "❌ Erreur serveur";
 
+
         }
 
 
 
-    }
-
-    catch(error){
+    } catch (error) {
 
 
         console.error(error);
